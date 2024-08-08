@@ -394,9 +394,9 @@ require('lazy').setup({
           --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
           -- },
           file_ignore_patterns = {
-            'node_modules',
-            '.git',
-            '.obsidian',
+            '^node_modules/',
+            '^%.git/',
+            '^%.obsidian/',
           },
         },
         -- pickers = {}

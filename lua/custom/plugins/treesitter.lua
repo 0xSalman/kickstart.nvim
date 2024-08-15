@@ -12,9 +12,14 @@ return {
       require('nvim-treesitter.configs').setup {
         ensure_installed = {
           'bash',
+          'c',
           'css',
           'dockerfile',
           'fish',
+          'git_config',
+          'git_rebase',
+          'gitcommit',
+          'gitignore',
           'go',
           'gomod',
           'gotmpl',

@@ -137,36 +137,33 @@ return {
   end, { desc = '[S]earch Document Methods' }),
 
   -- lsp
-  keymap.set('n', 'gR', function()
+  keymap.set('n', '<leader>gd', function()
+    gp.goto_preview_definition {}
+  end, { desc = 'LSP: Preview definition' }),
+  keymap.set('n', 'gR', ':NiceReference<CR>', { desc = 'LSP: [G]oto [R]eferences in popup', silent = true }),
+  keymap.set('n', '<leader>gr', function()
     vim.lsp.buf.references()
   end, { desc = 'LSP: [L]ist References in quickfix' }),
-  keymap.set('n', '<leader>gc', function()
+  keymap.set('n', 'gC', function()
     require('telescope.builtin').lsp_incoming_calls {
       prompt_title = 'LSP Calls',
     }
   end, { desc = 'LSP: [G]oto Calls' }),
-  keymap.set('n', 'gC', function()
+  keymap.set('n', '<leader>gc', function()
     vim.lsp.buf.incoming_calls()
-  end, { desc = 'LSP: [L]ist Calls' }),
-  keymap.set('n', '<leader>gd', function()
-    gp.goto_preview_definition {}
-  end, { desc = 'LSP: Preview definition in popup' }),
+  end, { desc = 'LSP: [L]ist Calls in quickfix' }),
   keymap.set('n', '<leader>gD', function()
     gp.goto_preview_declaration {}
-  end, { desc = 'LSP: Preview declaration in popup' }),
-  keymap.set('n', '<leader>gr', function()
-    gp.goto_preview_references {}
-  end, { desc = 'LSP: Preview references in popup' }),
-  keymap.set('n', '<leader>gR', ':NiceReference<CR>', { desc = 'LSP: List references in popup', silent = true }),
+  end, { desc = 'LSP: Preview declaration' }),
   keymap.set('n', '<leader>gt', function()
     gp.goto_preview_type_definition {}
-  end, { desc = 'LSP: Preview type definition in popup' }),
+  end, { desc = 'LSP: Preview type definition' }),
   keymap.set('n', '<leader>gi', function()
     gp.goto_preview_implementation {}
-  end, { desc = 'LSP: Preview implementation in popup' }),
-  keymap.set('n', '<leader>gc', function()
+  end, { desc = 'LSP: Preview implementation' }),
+  keymap.set('n', '<leader>gq', function()
     gp.close_all_win {}
-  end, { desc = 'LSP: Close all preview popups' }),
+  end, { desc = 'LSP: Close all previews' }),
 
   -- db
   keymap.set('n', '<leader>tdb', cmd.DBUIToggle, { desc = 'Toggle dbui' }),

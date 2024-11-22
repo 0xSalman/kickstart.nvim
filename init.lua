@@ -711,7 +711,7 @@ require('lazy').setup({
           },
         },
         marksman = {},
-        bufls = {}, -- protobuf
+        pbls = {}, -- protobuf
         -- pyright = {},
         rust_analyzer = {},
         solidity_ls_nomicfoundation = {},

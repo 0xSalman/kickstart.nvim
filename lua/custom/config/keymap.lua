@@ -14,13 +14,6 @@ return {
   keymap.set('n', '<leader>jw', '<C-w>j', { desc = 'Goto down window' }),
   keymap.set('n', '<leader>ew', '<C-w>=', { desc = 'Equalize windows size' }),
 
-  --terminal
-  keymap.set('n', '<leader>tt', ':split<bar>resize 15<bar>term<CR>', { noremap = true, desc = 'Open terminal window' }),
-  keymap.set('t', '<leader>lw', '<C-\\><C-N><C-w>l', { desc = 'Goto right window from terminal' }),
-  keymap.set('t', '<leader>hw', '<C-\\><C-N><C-w>h', { desc = 'Goto left window from terminal' }),
-  keymap.set('t', '<leader>kw', '<C-\\><C-N><C-w>k', { desc = 'Goto above window from terminal' }),
-  keymap.set('t', '<leader>jw', '<C-\\><C-N><C-w>j', { desc = 'Goto down window from terminal' }),
-
   -- horizontal movements
   keymap.set('n', 'le', '$', { desc = 'Goto end of line' }),
   keymap.set('v', 'le', '$', { desc = 'Goto end of line' }),
@@ -167,29 +160,4 @@ return {
 
   -- db
   keymap.set('n', '<leader>tdb', cmd.DBUIToggle, { desc = 'Toggle dbui' }),
-
-  -- codeium
-  keymap.set('i', '<C-g>', function()
-    return vim.fn['codeium#Accept']()
-  end, { expr = true, silent = true, nowait = true, desc = 'Accept Codeium Suggestion' }),
-
-  -- Nvim-dap
-  -- keymap.set("n", "<leader>bb", "<cmd>lua require'dap'.toggle_breakpoint()<cr>")
-  -- keymap.set("n", "<leader>bc", "<cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<cr>")
-  -- keymap.set("n", "<leader>bl", "<cmd>lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<cr>")
-  -- keymap.set("n", '<leader>br', "<cmd>lua require'dap'.clear_breakpoints()<cr>")
-  -- keymap.set("n", '<leader>ba', '<cmd>Telescope dap list_breakpoints<cr>')
-  -- keymap.set("n", "<leader>dc", "<cmd>lua require'dap'.continue()<cr>")
-  -- keymap.set("n", "<leader>dj", "<cmd>lua require'dap'.step_over()<cr>")
-  -- keymap.set("n", "<leader>dk", "<cmd>lua require'dap'.step_into()<cr>")
-  -- keymap.set("n", "<leader>do", "<cmd>lua require'dap'.step_out()<cr>")
-  -- keymap.set("n", '<leader>dd', function() require('dap').disconnect(); require('dapui').close(); end)
-  -- keymap.set("n", '<leader>dt', function() require('dap').terminate(); require('dapui').close(); end)
-  -- keymap.set("n", "<leader>dr", "<cmd>lua require'dap'.repl.toggle()<cr>")
-  -- keymap.set("n", "<leader>dl", "<cmd>lua require'dap'.run_last()<cr>")
-  -- keymap.set("n", '<leader>di', function() require "dap.ui.widgets".hover() end)
-  -- keymap.set("n", '<leader>d?', function() local widgets = require "dap.ui.widgets"; widgets.centered_float(widgets.scopes) end)
-  -- keymap.set("n", '<leader>df', '<cmd>Telescope dap frames<cr>')
-  -- keymap.set("n", '<leader>dh', '<cmd>Telescope dap commands<cr>')
-  -- keymap.set("n", '<leader>de', function() require('telescope.builtin').diagnostics({default_text=":E:"}) end)
 }

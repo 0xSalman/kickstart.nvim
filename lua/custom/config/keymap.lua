@@ -107,12 +107,6 @@ return {
   keymap.set({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'Git: select hunk' }),
 
   -- telescope
-  keymap.set('n', '<leader>sH', function()
-    require('telescope.builtin').find_files {
-      prompt_title = 'Hidden Files',
-      hidden = true,
-    }
-  end, { desc = '[S]earch Hidden Files' }),
   keymap.set('n', '<leader>sc', ':Telescope commands<CR>', { desc = 'Search commands' }),
   keymap.set('n', '<leader>se', function()
     require('telescope.builtin').diagnostics {

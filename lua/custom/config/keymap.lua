@@ -73,14 +73,9 @@ return {
   keymap.set('n', '<leader>tu', cmd.UndotreeToggle, { desc = 'Toggle undotree' }),
 
   -- git
-  -- keymap.set('n', '<leader>gs', cmd.Git, { desc = 'Git: status' }),
   -- keymap.set('n', '<leader>gH', ':0Gllog<CR>', { desc = 'Git: history of current file' }),
-  -- keymap.set('n', '<leader>gd', ':Gvdiffsplit!<CR>', { desc = 'Git: three way diff split vertically' }),
-  -- keymap.set('n', '<leader>gl', ':diffget //3<CR>', { desc = 'Git: accept changes from right(local)' }),
-  -- keymap.set('n', '<leader>gh', ':diffget //2<CR>', { desc = 'Git: accept changes from left(remote)' }),
-  -- keymap.set('n', '<leader>gD', ':diffoff<CR>', { desc = 'Git: turn off diff' }),
-  keymap.set('n', '<leader>gl', ':diffget RE<CR>', { desc = 'Git: accept changes from right(local)' }),
-  keymap.set('n', '<leader>gh', ':diffget LO<CR>', { desc = 'Git: accept changes from left(remote)' }),
+  keymap.set('n', '<leader>gh', ':diffget LO<CR>', { desc = 'Git: accept changes from left(head)' }),
+  keymap.set('n', '<leader>gl', ':diffget RE<CR>', { desc = 'Git: accept changes from right(modified)' }),
   keymap.set({ 'n', 'v' }, '<leader>hn', ':Gitsigns next_hunk<CR>', { desc = 'Git: next diff hunk' }),
   keymap.set({ 'n', 'v' }, '<leader>hp', ':Gitsigns prev_hunk<CR>', { desc = 'Git: previous diff hunk' }),
   keymap.set({ 'n', 'v' }, '<leader>hP', ':Gitsigns preview_hunk<CR>', { desc = 'Git: preview diff hunk' }),
@@ -89,12 +84,12 @@ return {
   end, { desc = 'Git: stage hunk' }),
   keymap.set('v', '<leader>hr', function()
     gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-  end, { desc = 'Git: reset hunk' }),
+  end, { desc = 'Git: reset selected hunk' }),
   keymap.set('n', '<leader>hs', gs.stage_hunk, { desc = 'Git: stage hunk' }),
-  keymap.set('n', '<leader>hr', gs.reset_hunk, { desc = 'Git: reset hunk' }),
   keymap.set('n', '<leader>hS', gs.stage_buffer, { desc = 'Git: stage buffer' }),
-  keymap.set('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'Git: undo stage hunk' }),
+  keymap.set('n', '<leader>hr', gs.reset_hunk, { desc = 'Git: reset hunk' }),
   keymap.set('n', '<leader>hR', gs.reset_buffer, { desc = 'Git: reset buffer' }),
+  keymap.set('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'Git: undo staged hunk' }),
   keymap.set('n', '<leader>hb', function()
     gs.blame_line { full = false }
   end, { desc = 'Git: blame line' }),
@@ -103,7 +98,7 @@ return {
     gs.diffthis '~'
   end, { desc = 'Git: diff against last commit' }),
   keymap.set('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'Git: toggle blame line' }),
-  keymap.set('n', '<leader>td', gs.toggle_deleted, { desc = 'Git: toggle show deleted' }),
+  keymap.set('n', '<leader>tr', gs.toggle_deleted, { desc = 'Git: toggle show deleted' }),
   keymap.set({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'Git: select hunk' }),
 
   -- telescope

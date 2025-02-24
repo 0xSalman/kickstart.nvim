@@ -5,9 +5,6 @@
 return {
   'mbbill/undotree',
   'tpope/vim-repeat',
-  -- 'tpope/vim-surround',
-  -- 'unblevable/quick-scope',
-  'hrsh7th/cmp-nvim-lsp-signature-help',
   -- {
   --   'Exafunction/codeium.vim',
   --   -- event = 'BufEnter',

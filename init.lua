@@ -1176,10 +1176,8 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     config = function(_, opts)
-      -- First load the base configuration
       require('nvim-treesitter.configs').setup(opts)
 
-      -- Then set up the repeatable move functionality
       local ts_repeat_move = require 'nvim-treesitter.textobjects.repeatable_move'
 
       -- vim way: ; goes to the direction you were moving.

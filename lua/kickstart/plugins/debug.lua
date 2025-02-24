@@ -25,6 +25,28 @@
 -- keymap.set("n", '<leader>dh', '<cmd>Telescope dap commands<cr>')
 -- keymap.set("n", '<leader>de', function() require('telescope.builtin').diagnostics({default_text=":E:"}) end)
 
+local function find_cargo_manifest_dir()
+  -- Get the current crate's directory
+  local current_dir = vim.fn.expand '%:p:h'
+  while current_dir ~= '/' do
+    if vim.fn.filereadable(current_dir .. '/Cargo.toml') == 1 then
+      return current_dir
+    end
+    current_dir = vim.fn.fnamemodify(current_dir, ':h')
+  end
+  return vim.fn.getcwd() -- fallback to workspace dir if not found
+end
+
+local function get_rust_executable()
+  local job_id = vim.fn.jobstart 'cargo build'
+  vim.fn.jobwait { job_id }
+
+  local project_dir = vim.fn.getcwd()
+  local metadata = vim.fn.systemlist 'cargo metadata --format-version 1 --no-deps'
+  local package_name = metadata[1]:match '"name":"(.-)"'
+  return project_dir .. '/target/debug/' .. package_name
+end
+
 return {
   -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
@@ -267,41 +289,24 @@ return {
         name = 'Debug Rust',
         type = 'codelldb',
         request = 'launch',
-        program = function()
-          local job_id = vim.fn.jobstart 'cargo build'
-          vim.fn.jobwait { job_id }
-          -- vim.cmd('!cargo build', { silent = true })
-
-          local project_dir = vim.fn.getcwd()
-          local metadata = vim.fn.systemlist 'cargo metadata --format-version 1 --no-deps'
-          local package_name = metadata[1]:match '"name":"(.-)"'
-          local executable = project_dir .. '/target/debug/' .. package_name
-
-          return executable
-          -- return vim.fn.input('Path to executable: ', executable)
-        end,
+        program = get_rust_executable,
         cwd = '${workspaceFolder}',
         sourceLanguages = { 'rust' },
         stopOnEntry = false,
         exitAfterTaskReturns = false,
         showDisassembly = 'never',
         runInTerminal = false,
+        env = function()
+          return {
+            CARGO_MANIFEST_DIR = find_cargo_manifest_dir(),
+          }
+        end,
       },
       {
         name = 'Debug Rust (Arguments)',
         type = 'codelldb',
         request = 'launch',
-        program = function()
-          local job_id = vim.fn.jobstart 'cargo build'
-          vim.fn.jobwait { job_id }
-
-          local project_dir = vim.fn.getcwd()
-          local metadata = vim.fn.systemlist 'cargo metadata --format-version 1 --no-deps'
-          local package_name = metadata[1]:match '"name":"(.-)"'
-          local executable = project_dir .. '/target/debug/' .. package_name
-
-          return executable
-        end,
+        program = get_rust_executable,
         args = get_arguments,
         cwd = '${workspaceFolder}',
         sourceLanguages = { 'rust' },
@@ -309,6 +314,11 @@ return {
         exitAfterTaskReturns = false,
         showDisassembly = 'never',
         runInTerminal = false,
+        env = function()
+          return {
+            CARGO_MANIFEST_DIR = find_cargo_manifest_dir(),
+          }
+        end,
       },
     }
 

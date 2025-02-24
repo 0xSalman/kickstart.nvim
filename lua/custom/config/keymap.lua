@@ -61,13 +61,13 @@ return {
   keymap.set('n', 'J', 'mzJ`z', { desc = 'Keep cursor position when merging two lines' }),
   keymap.set('n', '<leader>fv', ':Oil<CR>', { desc = 'Open file explorer of the current directory' }),
   keymap.set('n', '<leader>fs', ':w<CR>', { desc = 'Save file' }),
+  keymap.set('n', '<leader>fq', ':q<CR>', { desc = 'Quit file' }),
   keymap.set('n', '<leader>J', 'd0kJ', { desc = 'Delete leading spaces and merge it with above line' }),
   keymap.set('n', '<C-j>', ':m .+1<CR>==', { noremap = true, silent = true, desc = 'Move current line up' }),
   keymap.set('v', '<C-j>', ":m '>+1<CR>gv=gv", { noremap = true, silent = true, desc = 'Move selected lines up' }),
   keymap.set('n', '<C-f>', ':m .-2<CR>==', { noremap = true, silent = true, desc = 'Move current line up' }),
   keymap.set('v', '<C-f>', ":m '<-2<CR>gv=gv", { noremap = true, silent = true, desc = 'Move selected lines up' }),
   keymap.set('v', '<leader>in', 'g<C-a>', { noremap = true, desc = 'Auto increment selected values' }),
-  keymap.set('n', 'gx', ':!open <c-r><c-a><CR>', { desc = 'Open URL under cursor' }),
 
   -- undo tree
   keymap.set('n', '<leader>tu', cmd.UndotreeToggle, { desc = 'Toggle undotree' }),

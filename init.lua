@@ -89,6 +89,7 @@ P.S. You can delete this when you're done too. It's your config now! :)
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+vim.g.editorconfig = true
 
 -- Set to true if you have a Nerd Font installed
 vim.g.have_nerd_font = true
@@ -443,6 +444,19 @@ require('lazy').setup({
       end, { desc = '[S]earch [F]iles (including hidden)' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+      vim.keymap.set('v', '<leader>sW', function()
+        -- Get the visual selection
+        vim.cmd 'noau normal! "vy"' -- Use v register without triggering autocommands
+        local text = vim.fn.getreg 'v'
+
+        -- Clean the text (remove line endings and such)
+        text = string.gsub(text, '\n', '')
+
+        -- Only search if text is not empty
+        if text and text ~= '' then
+          builtin.grep_string { search = text }
+        end
+      end, { desc = '[S]earch selected [W]ord' })
       vim.keymap.set('n', '<leader>sg', require('telescope').extensions.live_grep_args.live_grep_args, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
@@ -687,13 +701,15 @@ require('lazy').setup({
         ansiblels = {},
         bashls = {},
         clangd = {},
-        docker_compose_language_service = {},
         dockerls = {},
-        eslint = {},
+        eslint = {
+          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+        },
         graphql = {
           filetypes = { 'typescript', 'graphqls', 'graphql' },
         },
         gopls = {},
+        html = {},
         jsonls = {},
         lua_ls = {
           -- cmd = { ... },
@@ -712,7 +728,34 @@ require('lazy').setup({
         marksman = {},
         pbls = {}, -- protobuf
         -- pyright = {},
-        rust_analyzer = {},
+        rust_analyzer = {
+          settings = {
+            -- imports = {
+            --   granularity = {
+            --     group = 'crate',
+            --   },
+            --   prefix = 'self',
+            -- },
+            cargo = {
+              buildScripts = {
+                enable = false,
+              },
+            },
+            procMacro = {
+              enable = false,
+            },
+            checkOnSave = {
+              command = 'clippy',
+              allFeatures = true,
+            },
+            diagnostics = {
+              enable = true,
+              disabled = { 'unresolved-proc-macro', 'missing-unsafe' },
+              enableExperimental = true,
+              warningsAsHint = {},
+            },
+          },
+        },
         solidity_ls_nomicfoundation = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -720,7 +763,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
+        ts_ls = {},
         taplo = {}, -- toml
         yamlls = {},
         zls = {},
@@ -772,7 +815,7 @@ require('lazy').setup({
     cmd = { 'ConformInfo' },
     keys = {
       {
-        '<leader>f',
+        '<leader>F',
         function()
           require('conform').format { async = true, lsp_format = 'fallback' }
         end,
@@ -995,10 +1038,51 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+    },
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'css',
+        'dockerfile',
+        'fish',
+        'git_config',
+        'git_rebase',
+        'gitcommit',
+        'gitignore',
+        'go',
+        'gomod',
+        'gotmpl',
+        'graphql',
+        'html',
+        'javascript',
+        'json',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'nginx',
+        'proto',
+        'python',
+        'query',
+        'rust',
+        'solidity',
+        'sql',
+        'ssh_config',
+        'terraform',
+        'tmux',
+        'toml',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+        'yaml',
+        'zig',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1009,6 +1093,81 @@ require('lazy').setup({
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
+
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = 'si',
+          node_incremental = 'sn',
+          scope_incremental = 'snc',
+          node_decremental = '<bs>',
+        },
+      },
+
+      textobjects = {
+        select = {
+          enable = true,
+          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+          keymaps = {
+            -- You can use the capture groups defined in textobjects.scm
+            ['a='] = { query = '@assignment.outer', desc = 'Select outer part of an assignment' },
+            ['i='] = { query = '@assignment.inner', desc = 'Select inner part of an assignment' },
+            ['l='] = { query = '@assignment.lhs', desc = 'Select left hand side of an assignment' },
+            ['r='] = { query = '@assignment.rhs', desc = 'Select right hand side of an assignment' },
+
+            ['aa'] = { query = '@parameter.outer', desc = 'Select outer part of a parameter/argument' },
+            ['ia'] = { query = '@parameter.inner', desc = 'Select inner part of a parameter/argument' },
+
+            ['ai'] = { query = '@conditional.outer', desc = 'Select outer part of a conditional' },
+            ['ii'] = { query = '@conditional.inner', desc = 'Select inner part of a conditional' },
+
+            ['al'] = { query = '@loop.outer', desc = 'Select outer part of a loop' },
+            ['il'] = { query = '@loop.inner', desc = 'Select inner part of a loop' },
+
+            ['af'] = { query = '@call.outer', desc = 'Select outer part of a function call' },
+            ['if'] = { query = '@call.inner', desc = 'Select inner part of a function call' },
+
+            ['am'] = { query = '@function.outer', desc = 'Select outer part of a method/function definition' },
+            ['im'] = { query = '@function.inner', desc = 'Select inner part of a method/function definition' },
+
+            ['ac'] = { query = '@class.outer', desc = 'Select outer part of a class' },
+            ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class' },
+          },
+        },
+        move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            -- [']m'] = '@function.outer',
+            ['<leader>fn'] = '@function.outer',
+            [']]'] = '@class.outer',
+          },
+          goto_next_end = {
+            -- [']M'] = '@function.outer',
+            ['<leader>fN'] = '@function.outer',
+            [']['] = '@class.outer',
+          },
+          goto_previous_start = {
+            -- ['[m'] = '@function.outer',
+            ['<leader>fp'] = '@function.outer',
+            ['[['] = '@class.outer',
+          },
+          goto_previous_end = {
+            -- ['[M'] = '@function.outer',
+            ['<leader>fP'] = '@function.outer',
+            ['[]'] = '@class.outer',
+          },
+        },
+        swap = {
+          enable = true,
+          swap_next = {
+            ['<leader>a'] = '@parameter.inner',
+          },
+          swap_previous = {
+            ['<leader>A'] = '@parameter.inner',
+          },
+        },
+      },
     },
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
@@ -1016,6 +1175,23 @@ require('lazy').setup({
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+    config = function(_, opts)
+      -- First load the base configuration
+      require('nvim-treesitter.configs').setup(opts)
+
+      -- Then set up the repeatable move functionality
+      local ts_repeat_move = require 'nvim-treesitter.textobjects.repeatable_move'
+
+      -- vim way: ; goes to the direction you were moving.
+      vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move)
+      vim.keymap.set({ 'n', 'x', 'o' }, ',', ts_repeat_move.repeat_last_move_opposite)
+
+      -- Make builtin f, F, t, T also repeatable with ; and ,
+      vim.keymap.set({ 'n', 'x', 'o' }, 'f', ts_repeat_move.builtin_f_expr, { expr = true })
+      vim.keymap.set({ 'n', 'x', 'o' }, 'F', ts_repeat_move.builtin_F_expr, { expr = true })
+      vim.keymap.set({ 'n', 'x', 'o' }, 't', ts_repeat_move.builtin_t_expr, { expr = true })
+      vim.keymap.set({ 'n', 'x', 'o' }, 'T', ts_repeat_move.builtin_T_expr, { expr = true })
+    end,
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the

@@ -4,8 +4,8 @@ return {
     version = '*', -- recommended, use latest release instead of latest commit
     lazy = true,
     event = {
-      'BufReadPre ' .. vim.fn.expand '~' .. '/second-brain/**/*.md',
-      'BufNewFile ' .. vim.fn.expand '~' .. '/second-brain/**/*.md',
+      'BufReadPre **/second-brain/**/*.md',
+      'BufNewFile **/second-brain/**/*.md',
     },
     dependencies = {
       'nvim-lua/plenary.nvim',
@@ -14,7 +14,7 @@ return {
       workspaces = {
         {
           name = 'main',
-          path = '~/second-brain',
+          path = '/Users/salman/Library/Mobile Documents/iCloud~md~obsidian/Documents/second-brain',
         },
       },
     },
@@ -23,7 +23,7 @@ return {
 
       -- Set conceallevel for Markdown files in the Obsidian vault
       vim.api.nvim_create_autocmd('BufEnter', {
-        pattern = vim.fn.expand '~' .. '/second-brain/**/*.md',
+        pattern = '**/second-brain/**/*.md',
         callback = function()
           vim.opt_local.conceallevel = 2
         end,

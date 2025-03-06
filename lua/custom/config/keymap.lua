@@ -60,6 +60,7 @@ return {
   -- misc
   keymap.set('n', 'J', 'mzJ`z', { desc = 'Keep cursor position when merging two lines' }),
   keymap.set('n', '<leader>fv', ':Oil<CR>', { desc = 'Open file explorer of the current directory' }),
+  -- keymap.set('n', '<leader>fv', ':lua MiniFiles.open()<CR>', { desc = 'Open file explorer of the current directory' }),
   keymap.set('n', '<leader>fs', ':w<CR>', { desc = 'Save file' }),
   keymap.set('n', '<leader>fq', ':q<CR>', { desc = 'Quit file' }),
   keymap.set('n', '<leader>J', 'd0kJ', { desc = 'Delete leading spaces and merge it with above line' }),
@@ -79,26 +80,6 @@ return {
   keymap.set({ 'n', 'v' }, '<leader>hn', ':Gitsigns next_hunk<CR>', { desc = 'Git: next diff hunk' }),
   keymap.set({ 'n', 'v' }, '<leader>hp', ':Gitsigns prev_hunk<CR>', { desc = 'Git: previous diff hunk' }),
   keymap.set({ 'n', 'v' }, '<leader>hP', ':Gitsigns preview_hunk<CR>', { desc = 'Git: preview diff hunk' }),
-  keymap.set('v', '<leader>hs', function()
-    gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
-  end, { desc = 'Git: stage hunk' }),
-  keymap.set('v', '<leader>hr', function()
-    gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
-  end, { desc = 'Git: reset selected hunk' }),
-  keymap.set('n', '<leader>hs', gs.stage_hunk, { desc = 'Git: stage hunk' }),
-  keymap.set('n', '<leader>hS', gs.stage_buffer, { desc = 'Git: stage buffer' }),
-  keymap.set('n', '<leader>hr', gs.reset_hunk, { desc = 'Git: reset hunk' }),
-  keymap.set('n', '<leader>hR', gs.reset_buffer, { desc = 'Git: reset buffer' }),
-  keymap.set('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'Git: undo staged hunk' }),
-  keymap.set('n', '<leader>hb', function()
-    gs.blame_line { full = false }
-  end, { desc = 'Git: blame line' }),
-  keymap.set('n', '<leader>hd', gs.diffthis, { desc = 'Git: diff against index' }),
-  keymap.set('n', '<leader>hD', function()
-    gs.diffthis '~'
-  end, { desc = 'Git: diff against last commit' }),
-  keymap.set('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'Git: toggle blame line' }),
-  keymap.set('n', '<leader>tr', gs.toggle_deleted, { desc = 'Git: toggle show deleted' }),
   keymap.set({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'Git: select hunk' }),
 
   -- telescope

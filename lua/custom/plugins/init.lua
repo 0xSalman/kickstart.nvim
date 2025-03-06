@@ -13,6 +13,7 @@ return {
   {
     'stevearc/oil.nvim',
     opts = {},
+    lazy = false,
   },
   'rafamadriz/friendly-snippets',
 }

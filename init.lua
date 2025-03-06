@@ -966,8 +966,7 @@ require('lazy').setup({
           { name = 'path' },
           { name = 'nvim_lsp_signature_help' },
           { name = 'vim-dadbod-completion' },
-          { name = 'nvim_lsp_signature_help' },
-          { name = 'codeium' },
+          -- { name = 'codeium' },
         },
       }
     end,
@@ -1007,7 +1006,7 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      -- require('mini.ai').setup { n_lines = 500 }
+      require('mini.ai').setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
@@ -1033,6 +1032,9 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+
+      -- require('mini.files').setup()
+      require('mini.pairs').setup()
     end,
   },
   { -- Highlight, edit, and navigate code
@@ -1069,6 +1071,7 @@ require('lazy').setup({
         'proto',
         'python',
         'query',
+        'regex',
         'rust',
         'solidity',
         'sql',
@@ -1105,35 +1108,35 @@ require('lazy').setup({
       },
 
       textobjects = {
-        select = {
-          enable = true,
-          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-          keymaps = {
-            -- You can use the capture groups defined in textobjects.scm
-            ['a='] = { query = '@assignment.outer', desc = 'Select outer part of an assignment' },
-            ['i='] = { query = '@assignment.inner', desc = 'Select inner part of an assignment' },
-            ['l='] = { query = '@assignment.lhs', desc = 'Select left hand side of an assignment' },
-            ['r='] = { query = '@assignment.rhs', desc = 'Select right hand side of an assignment' },
-
-            ['aa'] = { query = '@parameter.outer', desc = 'Select outer part of a parameter/argument' },
-            ['ia'] = { query = '@parameter.inner', desc = 'Select inner part of a parameter/argument' },
-
-            ['ai'] = { query = '@conditional.outer', desc = 'Select outer part of a conditional' },
-            ['ii'] = { query = '@conditional.inner', desc = 'Select inner part of a conditional' },
-
-            ['al'] = { query = '@loop.outer', desc = 'Select outer part of a loop' },
-            ['il'] = { query = '@loop.inner', desc = 'Select inner part of a loop' },
-
-            ['af'] = { query = '@call.outer', desc = 'Select outer part of a function call' },
-            ['if'] = { query = '@call.inner', desc = 'Select inner part of a function call' },
-
-            ['am'] = { query = '@function.outer', desc = 'Select outer part of a method/function definition' },
-            ['im'] = { query = '@function.inner', desc = 'Select inner part of a method/function definition' },
-
-            ['ac'] = { query = '@class.outer', desc = 'Select outer part of a class' },
-            ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class' },
-          },
-        },
+        -- select = {
+        --   enable = true,
+        --   lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+        --   keymaps = {
+        --     -- You can use the capture groups defined in textobjects.scm
+        --     ['a='] = { query = '@assignment.outer', desc = 'Select outer part of an assignment' },
+        --     ['i='] = { query = '@assignment.inner', desc = 'Select inner part of an assignment' },
+        --     ['l='] = { query = '@assignment.lhs', desc = 'Select left hand side of an assignment' },
+        --     ['r='] = { query = '@assignment.rhs', desc = 'Select right hand side of an assignment' },
+        --
+        --     ['aa'] = { query = '@parameter.outer', desc = 'Select outer part of a parameter/argument' },
+        --     ['ia'] = { query = '@parameter.inner', desc = 'Select inner part of a parameter/argument' },
+        --
+        --     ['ai'] = { query = '@conditional.outer', desc = 'Select outer part of a conditional' },
+        --     ['ii'] = { query = '@conditional.inner', desc = 'Select inner part of a conditional' },
+        --
+        --     ['al'] = { query = '@loop.outer', desc = 'Select outer part of a loop' },
+        --     ['il'] = { query = '@loop.inner', desc = 'Select inner part of a loop' },
+        --
+        --     ['af'] = { query = '@call.outer', desc = 'Select outer part of a function call' },
+        --     ['if'] = { query = '@call.inner', desc = 'Select inner part of a function call' },
+        --
+        --     ['am'] = { query = '@function.outer', desc = 'Select outer part of a method/function definition' },
+        --     ['im'] = { query = '@function.inner', desc = 'Select inner part of a method/function definition' },
+        --
+        --     ['ac'] = { query = '@class.outer', desc = 'Select outer part of a class' },
+        --     ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class' },
+        --   },
+        -- },
         move = {
           enable = true,
           set_jumps = true, -- whether to set jumps in the jumplist
@@ -1204,9 +1207,9 @@ require('lazy').setup({
   require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  require 'kickstart.plugins.autopairs',
+  -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

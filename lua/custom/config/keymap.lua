@@ -1,3 +1,5 @@
+local next_integrations = require 'nvim-next.integrations'
+
 return {
 
   -- windows and buffers

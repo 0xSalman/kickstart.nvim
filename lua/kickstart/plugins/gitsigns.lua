@@ -7,7 +7,8 @@ return {
     'lewis6991/gitsigns.nvim',
     opts = {
       on_attach = function(bufnr)
-        local gitsigns = require 'gitsigns'
+        -- local gitsigns = require 'gitsigns'
+        local gitsigns = package.loaded.gitsigns
 
         local function map(mode, l, r, opts)
           opts = opts or {}
@@ -15,21 +16,27 @@ return {
           vim.keymap.set(mode, l, r, opts)
         end
 
+        local nngs = require('nvim-next.integrations').gitsigns(gitsigns)
+
         -- Navigation
-        map('n', ']c', function()
+        map({ 'n', 'v', 'o' }, '<leader>hn', function()
           if vim.wo.diff then
-            vim.cmd.normal { ']c', bang = true }
-          else
-            gitsigns.nav_hunk 'next'
+            vim.cmd.normal { '<leader>hn', bang = true }
           end
+          vim.schedule(function()
+            nngs.next_hunk()
+          end)
+          return '<Ignore>'
         end, { desc = 'Jump to next git [c]hange' })
 
-        map('n', '[c', function()
+        map({ 'n', 'v', 'o' }, '<leader>hp', function()
           if vim.wo.diff then
-            vim.cmd.normal { '[c', bang = true }
-          else
-            gitsigns.nav_hunk 'prev'
+            vim.cmd.normal { '<leader>hp', bang = true }
           end
+          vim.schedule(function()
+            nngs.prev_hunk()
+          end)
+          return '<Ignore>'
         end, { desc = 'Jump to previous git [c]hange' })
 
         -- Actions
@@ -46,7 +53,7 @@ return {
         map('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer' })
         map('n', '<leader>hu', gitsigns.stage_hunk, { desc = 'git [u]ndo stage hunk' })
         map('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer' })
-        map('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk' })
+        map('n', '<leader>hP', gitsigns.preview_hunk, { desc = 'git [p]review hunk' })
         map('n', '<leader>hb', gitsigns.blame_line, { desc = 'git [b]lame line' })
         map('n', '<leader>hd', gitsigns.diffthis, { desc = 'git [d]iff against index' })
         map('n', '<leader>hD', function()
@@ -55,6 +62,8 @@ return {
         -- Toggles
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
         map('n', '<leader>tD', gitsigns.preview_hunk_inline, { desc = '[T]oggle git show [D]eleted' })
+        -- Text object
+        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'git select hunk' })
       end,
     },
   },

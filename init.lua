@@ -459,6 +459,12 @@ require('lazy').setup({
       end, { desc = '[S]earch selected [W]ord' })
       vim.keymap.set('n', '<leader>sg', require('telescope').extensions.live_grep_args.live_grep_args, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      vim.keymap.set('n', '<leader>se', function()
+        builtin.diagnostics {
+          prompt_title = 'Workspace Errors',
+          severity = vim.diagnostic.severity.ERROR,
+        }
+      end, { desc = '[S]earch Errors' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
@@ -485,6 +491,15 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      vim.keymap.set('n', '<leader>sc', ':Telescope commands<CR>', { desc = 'Search commands' })
+
+      vim.keymap.set('n', '<leader>sm', function()
+        builtin.treesitter {
+          prompt_title = 'Methods',
+          default_text = ':method:',
+        }
+      end, { desc = '[S]earch Document Methods' })
     end,
   },
 
@@ -517,6 +532,11 @@ require('lazy').setup({
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
+
+      -- NOTE: Adds goto-preview & nice-reference plugins here in order to
+      -- configure the lsp keymaps at one place with `LspAttach` function
+      { 'rmagatti/goto-preview', opts = {} },
+      { 'wiliamks/nice-reference.nvim' },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -569,9 +589,15 @@ require('lazy').setup({
           -- Find references for the word under your cursor.
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
+          map('gR', ':NiceReference<CR>', '[P]review [R]eferences')
+
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
           map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+
+          map('gC', function()
+            require('telescope.builtin').lsp_incoming_calls { prompt_title = 'LSP Calls' }
+          end, '[G]oto Calls')
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
@@ -587,16 +613,30 @@ require('lazy').setup({
           map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
           -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
+          --  Most Language ervers support renaming across files, etc.
           map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 
           -- Execute a code action, usually your cursor needs to be on top of an error
-          -- or a suggestion from your LSP for this to activate.
+          -- or a suggestion from your LP for this to activate.
           map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+
+          map('<leader>gr', vim.lsp.buf.references, '[L]ist References in quickfix')
+
+          map('<leader>gc', vim.lsp.buf.incoming_calls, '[L]ist Calls in quickfix')
+
+          map('<leader>gd', require('goto-preview').goto_preview_definition, 'Preview definition')
+
+          map('<leader>gD', require('goto-preview').goto_preview_declaration, 'Preview declaration')
+
+          map('<leader>gt', require('goto-preview').goto_preview_type_definition, 'Preview type definition')
+
+          map('<leader>gi', require('goto-preview').goto_preview_implementation, 'Preview implementation')
+
+          map('<leader>gq', require('goto-preview').close_all_win, 'Close all previews')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
@@ -726,6 +766,11 @@ require('lazy').setup({
           },
         },
         marksman = {},
+        move_analyzer = {
+          cmd = { os.getenv 'HOME' .. '/.cargo/bin/move-analyzer' },
+          filetypes = { 'move' },
+          root_dir = require('lspconfig.util').root_pattern('Move.toml', '.git'),
+        },
         pbls = {}, -- protobuf
         -- pyright = {},
         rust_analyzer = {
@@ -1033,8 +1078,9 @@ require('lazy').setup({
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
 
-      -- require('mini.files').setup()
       require('mini.pairs').setup()
+
+      require('mini.icons').setup()
     end,
   },
   { -- Highlight, edit, and navigate code

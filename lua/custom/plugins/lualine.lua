@@ -25,7 +25,14 @@ return {
         lualine_b = { 'branch', { 'diff', source = diff_source } },
         lualine_c = { { 'filename', path = 1 } },
         -- lualine_x = { 'filetype' },
-        lualine_x = {},
+        -- lualine_x = {},
+        lualine_x = {
+          {
+            require('noice').api.statusline.mode.get,
+            cond = require('noice').api.statusline.mode.has,
+            color = { fg = '#ff9e64' },
+          },
+        },
         lualine_y = { 'diagnostics' },
         lualine_z = { 'location' },
       },

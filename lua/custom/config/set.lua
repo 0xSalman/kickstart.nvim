@@ -16,6 +16,9 @@ opt.foldlevel = 20
 opt.foldmethod = 'expr'
 opt.foldexpr = 'nvim_treesitter#foldexpr()'
 
+-- wrapping
+opt.textwidth = 100
+
 -- window
 opt.scrolloff = 999
 
@@ -27,13 +30,8 @@ opt.swapfile = false
 opt.undodir = vim.fn.stdpath 'cache' .. '/undo'
 opt.iskeyword:append '-'
 
-local g = vim.g
+-- local g = vim.g
+--
+-- g.codeium_no_map_tab = true
 
-g.codeium_no_map_tab = true
-
-return {
-
-  -- Autocommand for TermOpen
-  -- interferes with nvim-dap: https://www.reddit.com/r/neovim/comments/wlbxh0/nvimdap_continue_drops_buffer_into_insert_mode/
-  -- vim.cmd([[autocmd TermOpen * startinsert]]),
-}
+return {}

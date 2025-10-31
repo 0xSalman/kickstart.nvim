@@ -406,9 +406,33 @@ require('lazy').setup({
           --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
           -- },
           file_ignore_patterns = {
-            '^node_modules/',
-            '^%.git/',
-            '^%.obsidian/',
+            -- General
+            '%.DS_Store$',
+            '%.swp$',
+            '%.idea/',
+            '%.vscode/',
+            '%.git/',
+            '%.obsidian/',
+
+            -- TS/JS
+            'node_modules/',
+            'dist/',
+            'build/',
+            '%.next/',
+            'out/',
+            '%.log$',
+            'package-lock.json',
+            'yarn.lock',
+            'pnpm-lock.yaml',
+
+            -- Go
+            'pkg/',
+            'vendor/',
+
+            -- Rust
+            'target/',
+            'Cargo.lock',
+            '%.sqlx',
           },
         },
         -- pickers = {}
@@ -439,9 +463,16 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sf', function()
         builtin.find_files {
           hidden = true,
-          -- no_ignore = true,
         }
       end, { desc = '[S]earch [F]iles (including hidden)' })
+      vim.keymap.set('n', '<leader>sv', function()
+        builtin.find_files {
+          prompt_title = 'Find env files',
+          hidden = true,
+          no_ignore = true,
+          search_file = '.env*',
+        }
+      end, { desc = '[S]earch en[V] [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('v', '<leader>sW', function()
@@ -740,14 +771,20 @@ require('lazy').setup({
       local servers = {
         ansiblels = {},
         bashls = {},
-        clangd = {},
+        clangd = {
+          filetypes = { 'c', 'cpp', 'objc', 'objcpp' },
+        },
         dockerls = {},
         eslint = {
           filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+          root_dir = function(fname)
+            return require('lspconfig.util').root_pattern('.eslintrc.js', 'package.json')(fname) or require('lspconfig.util').dirname(fname)
+          end,
         },
-        graphql = {
-          filetypes = { 'typescript', 'graphqls', 'graphql' },
-        },
+        -- FIXME: conflicts with TS & React
+        -- graphql = {
+        --   filetypes = { 'typescript', 'graphqls', 'graphql' },
+        -- },
         gopls = {},
         html = {},
         jsonls = {},
@@ -775,12 +812,12 @@ require('lazy').setup({
         -- pyright = {},
         rust_analyzer = {
           settings = {
-            -- imports = {
-            --   granularity = {
-            --     group = 'crate',
-            --   },
-            --   prefix = 'self',
-            -- },
+            imports = {
+              granularity = {
+                group = 'crate',
+              },
+              prefix = 'crate',
+            },
             cargo = {
               buildScripts = {
                 enable = false,
@@ -832,6 +869,8 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'js-debug-adapter',
         'gofumpt',
+        'goimports',
+        -- 'prettier',
         'shfmt',
         'typos',
       })
@@ -887,12 +926,15 @@ require('lazy').setup({
         }
       end,
       formatters_by_ft = {
+        go = { 'goimports', 'gofmt' },
+        json = { 'jq' },
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        -- markdown = { 'prettier' },
       },
     },
   },
@@ -1183,30 +1225,6 @@ require('lazy').setup({
         --     ['ic'] = { query = '@class.inner', desc = 'Select inner part of a class' },
         --   },
         -- },
-        move = {
-          enable = true,
-          set_jumps = true, -- whether to set jumps in the jumplist
-          goto_next_start = {
-            -- [']m'] = '@function.outer',
-            ['<leader>fn'] = '@function.outer',
-            [']]'] = '@class.outer',
-          },
-          goto_next_end = {
-            -- [']M'] = '@function.outer',
-            ['<leader>fN'] = '@function.outer',
-            [']['] = '@class.outer',
-          },
-          goto_previous_start = {
-            -- ['[m'] = '@function.outer',
-            ['<leader>fp'] = '@function.outer',
-            ['[['] = '@class.outer',
-          },
-          goto_previous_end = {
-            -- ['[M'] = '@function.outer',
-            ['<leader>fP'] = '@function.outer',
-            ['[]'] = '@class.outer',
-          },
-        },
         swap = {
           enable = true,
           swap_next = {
@@ -1225,19 +1243,36 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     config = function(_, opts)
+      require('nvim-next.integrations').treesitter_textobjects()
+
+      opts.textobjects = opts.textobjects or {}
+      opts.textobjects.move = nil
+
+      opts.nvim_next = {
+        enable = true,
+        textobjects = {
+          move = {
+            goto_next_start = {
+              ['<leader>fn'] = '@function.outer',
+              [']]'] = { query = '@class.outer', desc = 'Next class start' },
+            },
+            goto_next_end = {
+              ['<leader>fN'] = '@function.outer',
+              [']['] = '@class.outer',
+            },
+            goto_previous_start = {
+              ['<leader>fp'] = '@function.outer',
+              ['[['] = '@class.outer',
+            },
+            goto_previous_end = {
+              ['<leader>fP'] = '@function.outer',
+              ['[]'] = '@class.outer',
+            },
+          },
+        },
+      }
+
       require('nvim-treesitter.configs').setup(opts)
-
-      local ts_repeat_move = require 'nvim-treesitter.textobjects.repeatable_move'
-
-      -- vim way: ; goes to the direction you were moving.
-      vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move)
-      vim.keymap.set({ 'n', 'x', 'o' }, ',', ts_repeat_move.repeat_last_move_opposite)
-
-      -- Make builtin f, F, t, T also repeatable with ; and ,
-      vim.keymap.set({ 'n', 'x', 'o' }, 'f', ts_repeat_move.builtin_f_expr, { expr = true })
-      vim.keymap.set({ 'n', 'x', 'o' }, 'F', ts_repeat_move.builtin_F_expr, { expr = true })
-      vim.keymap.set({ 'n', 'x', 'o' }, 't', ts_repeat_move.builtin_t_expr, { expr = true })
-      vim.keymap.set({ 'n', 'x', 'o' }, 'T', ts_repeat_move.builtin_T_expr, { expr = true })
     end,
   },
 

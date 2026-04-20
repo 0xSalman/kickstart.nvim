@@ -48,7 +48,6 @@ return {
   vim.keymap.set('v', '<C-j>', ":m '>+1<CR>gv=gv", { noremap = true, silent = true, desc = 'Move selected lines up' }),
   vim.keymap.set('n', '<C-f>', ':m .-2<CR>==', { noremap = true, silent = true, desc = 'Move current line up' }),
   vim.keymap.set('v', '<C-f>', ":m '<-2<CR>gv=gv", { noremap = true, silent = true, desc = 'Move selected lines up' }),
-  vim.keymap.set('v', '<leader>in', 'g<C-a>', { noremap = true, desc = 'Auto increment selected values' }),
 
   -- undo tree
   vim.keymap.set('n', '<leader>tu', vim.cmd.UndotreeToggle, { desc = 'Toggle undotree' }),
